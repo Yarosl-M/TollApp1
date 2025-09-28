@@ -217,9 +217,9 @@
             tabPage1.Location = new Point(4, 37);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(242, 84);
+            tabPage1.Size = new Size(1068, 586);
             tabPage1.TabIndex = 0;
-            tabPage1.Text = "tabPage1";
+            tabPage1.Text = "Симуляция";
             tabPage1.UseVisualStyleBackColor = true;
             // 
             // tabPage2
@@ -243,7 +243,7 @@
             tabPage2.Padding = new Padding(3);
             tabPage2.Size = new Size(1068, 586);
             tabPage2.TabIndex = 1;
-            tabPage2.Text = "tabPage2";
+            tabPage2.Text = "Параметры";
             tabPage2.UseVisualStyleBackColor = true;
             // 
             // resetBtn
