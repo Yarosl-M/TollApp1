@@ -11,5 +11,18 @@ namespace TollApp
         {
 
         }
+
+        private void resetBtn_Click(object sender, EventArgs e)
+        {
+            foreach (NumericUpDown input in new[] {
+                carArriveIntervalInput, toll1Interval,
+                CarArrivalInterval, tollsInterval,
+                highwayToll2Interval, toll1GateCount,
+                toll2GateCount
+            })
+            {
+                input.Value = 1;
+            }
+        }
     }
 }

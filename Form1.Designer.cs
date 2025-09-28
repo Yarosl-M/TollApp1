@@ -44,8 +44,8 @@
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
             tabPage2 = new TabPage();
-            resetBtn = new Button();
             button1 = new Button();
+            resetBtn = new Button();
             ((System.ComponentModel.ISupportInitialize)carArriveIntervalInput).BeginInit();
             ((System.ComponentModel.ISupportInitialize)toll1Interval).BeginInit();
             ((System.ComponentModel.ISupportInitialize)CarArrivalInterval).BeginInit();
@@ -246,15 +246,6 @@
             tabPage2.Text = "Параметры";
             tabPage2.UseVisualStyleBackColor = true;
             // 
-            // resetBtn
-            // 
-            resetBtn.Location = new Point(259, 353);
-            resetBtn.Name = "resetBtn";
-            resetBtn.Size = new Size(258, 51);
-            resetBtn.TabIndex = 3;
-            resetBtn.Text = "Значения по умолчанию";
-            resetBtn.UseVisualStyleBackColor = true;
-            // 
             // button1
             // 
             button1.Location = new Point(523, 353);
@@ -263,6 +254,16 @@
             button1.TabIndex = 3;
             button1.Text = "Применить новые значения";
             button1.UseVisualStyleBackColor = true;
+            // 
+            // resetBtn
+            // 
+            resetBtn.Location = new Point(259, 353);
+            resetBtn.Name = "resetBtn";
+            resetBtn.Size = new Size(258, 51);
+            resetBtn.TabIndex = 3;
+            resetBtn.Text = "Значения по умолчанию";
+            resetBtn.UseVisualStyleBackColor = true;
+            resetBtn.Click += resetBtn_Click;
             // 
             // Form1
             // 
@@ -291,18 +292,18 @@
         #endregion
 
         private NumericUpDown carArriveIntervalInput;
-        private Label label1;
-        private Label label2;
         private NumericUpDown toll1Interval;
-        private Label label3;
         private NumericUpDown CarArrivalInterval;
         private NumericUpDown tollsInterval;
-        private Label label4;
         private NumericUpDown highwayToll2Interval;
-        private Label label5;
         private NumericUpDown toll1GateCount;
-        private Label label6;
         private NumericUpDown toll2GateCount;
+        private Label label1;
+        private Label label2;
+        private Label label3;
+        private Label label4;
+        private Label label5;
+        private Label label6;
         private TabControl tabControl1;
         private TabPage tabPage1;
         private TabPage tabPage2;
