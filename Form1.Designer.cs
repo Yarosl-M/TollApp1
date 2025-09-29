@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             carArriveIntervalInput = new NumericUpDown();
             label1 = new Label();
             label2 = new Label();
@@ -64,6 +65,7 @@
             resetBtn = new Button();
             label12 = new Label();
             pInput = new NumericUpDown();
+            carTimer = new System.Windows.Forms.Timer(components);
             ((System.ComponentModel.ISupportInitialize)carArriveIntervalInput).BeginInit();
             ((System.ComponentModel.ISupportInitialize)toll1Interval).BeginInit();
             ((System.ComponentModel.ISupportInitialize)CarArrivalInterval).BeginInit();
@@ -536,5 +538,6 @@
         private DataGridViewTextBoxColumn toll1TimeLeft;
         private Label label12;
         private NumericUpDown pInput;
+        private System.Windows.Forms.Timer carTimer;
     }
 }
