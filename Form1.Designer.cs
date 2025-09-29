@@ -258,7 +258,6 @@
             // 
             toll2Table.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             toll2Table.Columns.AddRange(new DataGridViewColumn[] { TollBooth2, Toll2Car, Toll2TimeLeft });
-            toll2Table.Cursor = Cursors.Cross;
             toll2Table.Location = new Point(601, 296);
             toll2Table.Name = "toll2Table";
             toll2Table.RowHeadersWidth = 51;
@@ -296,7 +295,6 @@
             // 
             toll1Table.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             toll1Table.Columns.AddRange(new DataGridViewColumn[] { TollBooth1, Toll1Car, toll1TimeLeft });
-            toll1Table.Cursor = Cursors.Cross;
             toll1Table.Location = new Point(601, 54);
             toll1Table.Name = "toll1Table";
             toll1Table.RowHeadersWidth = 51;
