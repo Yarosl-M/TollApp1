@@ -23,6 +23,7 @@ namespace TollApp
             {
                 input.Value = 1;
             }
+            pInput.Value = 25;
         }
     }
 }

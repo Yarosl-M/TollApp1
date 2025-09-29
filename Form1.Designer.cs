@@ -44,7 +44,13 @@
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
             toll2Table = new DataGridView();
+            TollBooth2 = new DataGridViewTextBoxColumn();
+            Toll2Car = new DataGridViewTextBoxColumn();
+            Toll2TimeLeft = new DataGridViewTextBoxColumn();
             toll1Table = new DataGridView();
+            TollBooth1 = new DataGridViewTextBoxColumn();
+            Toll1Car = new DataGridViewTextBoxColumn();
+            toll1TimeLeft = new DataGridViewTextBoxColumn();
             label8 = new Label();
             label11 = new Label();
             label10 = new Label();
@@ -56,12 +62,8 @@
             tabPage2 = new TabPage();
             button1 = new Button();
             resetBtn = new Button();
-            TollBooth1 = new DataGridViewTextBoxColumn();
-            Toll1Car = new DataGridViewTextBoxColumn();
-            toll1TimeLeft = new DataGridViewTextBoxColumn();
-            TollBooth2 = new DataGridViewTextBoxColumn();
-            Toll2Car = new DataGridViewTextBoxColumn();
-            Toll2TimeLeft = new DataGridViewTextBoxColumn();
+            label12 = new Label();
+            pInput = new NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)carArriveIntervalInput).BeginInit();
             ((System.ComponentModel.ISupportInitialize)toll1Interval).BeginInit();
             ((System.ComponentModel.ISupportInitialize)CarArrivalInterval).BeginInit();
@@ -74,6 +76,7 @@
             ((System.ComponentModel.ISupportInitialize)toll2Table).BeginInit();
             ((System.ComponentModel.ISupportInitialize)toll1Table).BeginInit();
             tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pInput).BeginInit();
             SuspendLayout();
             // 
             // carArriveIntervalInput
@@ -262,6 +265,33 @@
             toll2Table.Size = new Size(461, 188);
             toll2Table.TabIndex = 3;
             // 
+            // TollBooth2
+            // 
+            TollBooth2.HeaderText = "№";
+            TollBooth2.MinimumWidth = 6;
+            TollBooth2.Name = "TollBooth2";
+            TollBooth2.ReadOnly = true;
+            TollBooth2.SortMode = DataGridViewColumnSortMode.NotSortable;
+            TollBooth2.Width = 125;
+            // 
+            // Toll2Car
+            // 
+            Toll2Car.HeaderText = "Автомобиль";
+            Toll2Car.MinimumWidth = 6;
+            Toll2Car.Name = "Toll2Car";
+            Toll2Car.ReadOnly = true;
+            Toll2Car.SortMode = DataGridViewColumnSortMode.NotSortable;
+            Toll2Car.Width = 150;
+            // 
+            // Toll2TimeLeft
+            // 
+            Toll2TimeLeft.HeaderText = "Ост. время";
+            Toll2TimeLeft.MinimumWidth = 6;
+            Toll2TimeLeft.Name = "Toll2TimeLeft";
+            Toll2TimeLeft.ReadOnly = true;
+            Toll2TimeLeft.SortMode = DataGridViewColumnSortMode.NotSortable;
+            Toll2TimeLeft.Width = 125;
+            // 
             // toll1Table
             // 
             toll1Table.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -272,6 +302,33 @@
             toll1Table.RowHeadersWidth = 51;
             toll1Table.Size = new Size(461, 188);
             toll1Table.TabIndex = 2;
+            // 
+            // TollBooth1
+            // 
+            TollBooth1.HeaderText = "№";
+            TollBooth1.MinimumWidth = 6;
+            TollBooth1.Name = "TollBooth1";
+            TollBooth1.ReadOnly = true;
+            TollBooth1.SortMode = DataGridViewColumnSortMode.NotSortable;
+            TollBooth1.Width = 125;
+            // 
+            // Toll1Car
+            // 
+            Toll1Car.HeaderText = "Автомобиль";
+            Toll1Car.MinimumWidth = 6;
+            Toll1Car.Name = "Toll1Car";
+            Toll1Car.ReadOnly = true;
+            Toll1Car.SortMode = DataGridViewColumnSortMode.NotSortable;
+            Toll1Car.Width = 150;
+            // 
+            // toll1TimeLeft
+            // 
+            toll1TimeLeft.HeaderText = "Ост. время";
+            toll1TimeLeft.MinimumWidth = 6;
+            toll1TimeLeft.Name = "toll1TimeLeft";
+            toll1TimeLeft.ReadOnly = true;
+            toll1TimeLeft.SortMode = DataGridViewColumnSortMode.NotSortable;
+            toll1TimeLeft.Width = 125;
             // 
             // label8
             // 
@@ -359,15 +416,17 @@
             tabPage2.Controls.Add(toll1Interval);
             tabPage2.Controls.Add(label6);
             tabPage2.Controls.Add(tollsInterval);
+            tabPage2.Controls.Add(label12);
             tabPage2.Controls.Add(label5);
+            tabPage2.Controls.Add(pInput);
             tabPage2.Controls.Add(highwayToll2Interval);
             tabPage2.Controls.Add(label2);
             tabPage2.Controls.Add(toll1GateCount);
             tabPage2.Controls.Add(toll2GateCount);
-            tabPage2.Location = new Point(4, 29);
+            tabPage2.Location = new Point(4, 37);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(1068, 594);
+            tabPage2.Size = new Size(1068, 586);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Параметры";
             tabPage2.UseVisualStyleBackColor = true;
@@ -391,59 +450,26 @@
             resetBtn.UseVisualStyleBackColor = true;
             resetBtn.Click += resetBtn_Click;
             // 
-            // TollBooth1
+            // label12
             // 
-            TollBooth1.HeaderText = "№";
-            TollBooth1.MinimumWidth = 6;
-            TollBooth1.Name = "TollBooth1";
-            TollBooth1.ReadOnly = true;
-            TollBooth1.SortMode = DataGridViewColumnSortMode.NotSortable;
-            TollBooth1.Width = 125;
+            label12.AutoSize = true;
+            label12.Location = new Point(241, 285);
+            label12.Name = "label12";
+            label12.Size = new Size(489, 28);
+            label12.TabIndex = 2;
+            label12.Text = "P (вероятность съезда с шоссе после пункта № 1, %)";
+            label12.TextAlign = ContentAlignment.MiddleRight;
+            label12.Click += label2_Click_1;
             // 
-            // Toll1Car
+            // pInput
             // 
-            Toll1Car.HeaderText = "Автомобиль";
-            Toll1Car.MinimumWidth = 6;
-            Toll1Car.Name = "Toll1Car";
-            Toll1Car.ReadOnly = true;
-            Toll1Car.SortMode = DataGridViewColumnSortMode.NotSortable;
-            Toll1Car.Width = 150;
-            // 
-            // toll1TimeLeft
-            // 
-            toll1TimeLeft.HeaderText = "Ост. время";
-            toll1TimeLeft.MinimumWidth = 6;
-            toll1TimeLeft.Name = "toll1TimeLeft";
-            toll1TimeLeft.ReadOnly = true;
-            toll1TimeLeft.SortMode = DataGridViewColumnSortMode.NotSortable;
-            toll1TimeLeft.Width = 125;
-            // 
-            // TollBooth2
-            // 
-            TollBooth2.HeaderText = "№";
-            TollBooth2.MinimumWidth = 6;
-            TollBooth2.Name = "TollBooth2";
-            TollBooth2.ReadOnly = true;
-            TollBooth2.SortMode = DataGridViewColumnSortMode.NotSortable;
-            TollBooth2.Width = 125;
-            // 
-            // Toll2Car
-            // 
-            Toll2Car.HeaderText = "Автомобиль";
-            Toll2Car.MinimumWidth = 6;
-            Toll2Car.Name = "Toll2Car";
-            Toll2Car.ReadOnly = true;
-            Toll2Car.SortMode = DataGridViewColumnSortMode.NotSortable;
-            Toll2Car.Width = 150;
-            // 
-            // Toll2TimeLeft
-            // 
-            Toll2TimeLeft.HeaderText = "Ост. время";
-            Toll2TimeLeft.MinimumWidth = 6;
-            Toll2TimeLeft.Name = "Toll2TimeLeft";
-            Toll2TimeLeft.ReadOnly = true;
-            Toll2TimeLeft.SortMode = DataGridViewColumnSortMode.NotSortable;
-            Toll2TimeLeft.Width = 125;
+            pInput.DecimalPlaces = 1;
+            pInput.Location = new Point(748, 283);
+            pInput.Margin = new Padding(15);
+            pInput.Name = "pInput";
+            pInput.Size = new Size(111, 34);
+            pInput.TabIndex = 1;
+            pInput.Value = new decimal(new int[] { 25, 0, 0, 0 });
             // 
             // Form1
             // 
@@ -470,6 +496,7 @@
             ((System.ComponentModel.ISupportInitialize)toll1Table).EndInit();
             tabPage2.ResumeLayout(false);
             tabPage2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pInput).EndInit();
             ResumeLayout(false);
         }
 
@@ -509,5 +536,7 @@
         private DataGridViewTextBoxColumn TollBooth1;
         private DataGridViewTextBoxColumn Toll1Car;
         private DataGridViewTextBoxColumn toll1TimeLeft;
+        private Label label12;
+        private NumericUpDown pInput;
     }
 }
