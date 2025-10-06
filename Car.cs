@@ -17,9 +17,10 @@
             int len = letters.Length;
             LicenseNumber =
                 letters[rng.Next(len)].ToString()
+                + letters[rng.Next(len)].ToString()
+                + '-'
                 + (char)rng.Next(10)
-                + (char)rng.Next(10)
-                + letters[rng.Next(len)];
+                + (char)rng.Next(10);
         }
         public override string ToString()
         {
