@@ -112,7 +112,6 @@
             label2.TabIndex = 2;
             label2.Text = "n (число шлагбаумов на первом пункте)";
             label2.TextAlign = ContentAlignment.MiddleRight;
-            label2.Click += label2_Click_1;
             // 
             // toll1Interval
             // 
@@ -191,7 +190,6 @@
             label5.TabIndex = 2;
             label5.Text = "dt4 (средний интервал подъезда к пункту № 2 с шоссе)";
             label5.TextAlign = ContentAlignment.MiddleRight;
-            label5.Click += label2_Click_1;
             // 
             // toll1GateCount
             // 
@@ -213,7 +211,6 @@
             label6.TabIndex = 2;
             label6.Text = "n2 (число шлагбаумов на втором пункте)";
             label6.TextAlign = ContentAlignment.MiddleRight;
-            label6.Click += label2_Click_1;
             // 
             // toll2GateCount
             // 
@@ -460,7 +457,6 @@
             label12.TabIndex = 2;
             label12.Text = "P (вероятность съезда с шоссе после пункта № 1, %)";
             label12.TextAlign = ContentAlignment.MiddleRight;
-            label12.Click += label2_Click_1;
             // 
             // pInput
             // 

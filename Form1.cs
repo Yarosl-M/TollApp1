@@ -9,10 +9,6 @@
             InitializeComponent();
         }
 
-        private void label2_Click_1(object sender, EventArgs e)
-        {
-        }
-
         private void resetBtn_Click(object sender, EventArgs e)
         {
             foreach (NumericUpDown input in new[] {
@@ -70,6 +66,7 @@
                 await Task.Delay(TimeSpan.FromSeconds(waitPeriod));
             }
         }
+
 
         // должно вернуть случайное число с экспоненциальным
         // распределением (также дополнительно ограничено сверху
