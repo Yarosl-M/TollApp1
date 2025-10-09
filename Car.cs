@@ -28,7 +28,7 @@
         }
         public override string ToString()
         {
-            return LicenseNumber;
+            return $"[{Id}] {LicenseNumber}";
         }
     }
 }
