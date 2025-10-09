@@ -119,7 +119,7 @@
             toll1Interval.DecimalPlaces = 1;
             toll1Interval.Location = new Point(748, 79);
             toll1Interval.Margin = new Padding(15);
-            toll1Interval.Maximum = new decimal(new int[] { 10, 0, 0, 0 });
+            toll1Interval.Maximum = new decimal(new int[] { 5, 0, 0, 0 });
             toll1Interval.Minimum = new decimal(new int[] { 1, 0, 0, 65536 });
             toll1Interval.Name = "toll1Interval";
             toll1Interval.Size = new Size(111, 34);
@@ -141,7 +141,7 @@
             CarArrivalInterval.DecimalPlaces = 1;
             CarArrivalInterval.Location = new Point(748, 38);
             CarArrivalInterval.Margin = new Padding(15);
-            CarArrivalInterval.Maximum = new decimal(new int[] { 10, 0, 0, 0 });
+            CarArrivalInterval.Maximum = new decimal(new int[] { 5, 0, 0, 0 });
             CarArrivalInterval.Minimum = new decimal(new int[] { 1, 0, 0, 65536 });
             CarArrivalInterval.Name = "CarArrivalInterval";
             CarArrivalInterval.Size = new Size(111, 34);
@@ -153,7 +153,7 @@
             tollsInterval.DecimalPlaces = 1;
             tollsInterval.Location = new Point(748, 120);
             tollsInterval.Margin = new Padding(15);
-            tollsInterval.Maximum = new decimal(new int[] { 10, 0, 0, 0 });
+            tollsInterval.Maximum = new decimal(new int[] { 5, 0, 0, 0 });
             tollsInterval.Minimum = new decimal(new int[] { 1, 0, 0, 65536 });
             tollsInterval.Name = "tollsInterval";
             tollsInterval.Size = new Size(111, 34);
@@ -175,7 +175,7 @@
             highwayToll2Interval.DecimalPlaces = 1;
             highwayToll2Interval.Location = new Point(748, 161);
             highwayToll2Interval.Margin = new Padding(15);
-            highwayToll2Interval.Maximum = new decimal(new int[] { 10, 0, 0, 0 });
+            highwayToll2Interval.Maximum = new decimal(new int[] { 5, 0, 0, 0 });
             highwayToll2Interval.Minimum = new decimal(new int[] { 1, 0, 0, 65536 });
             highwayToll2Interval.Name = "highwayToll2Interval";
             highwayToll2Interval.Size = new Size(111, 34);
@@ -439,6 +439,7 @@
             button1.TabIndex = 3;
             button1.Text = "Применить новые значения";
             button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
             // 
             // resetBtn
             // 
