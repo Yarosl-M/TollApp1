@@ -43,10 +43,6 @@
             while (simulationRunning)
             {
                 double waitPeriod = NextExp(mean);
-                Invoke(() =>
-                {
-                    Text = waitPeriod.ToString();
-                });
 
                 var car = new Car();
                 
