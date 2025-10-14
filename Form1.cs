@@ -49,9 +49,10 @@
                 var car = new Car();
                 var addQueue = n == 1 ? arrival1Queue : arrival2Queue;
                 var semaphore = n == 1 ? tollSemaphore1 : tollSemaphore2;
-                var tollTable = n == 1 ? toll1Table : toll2Table;
+                //var tollTable = n == 1 ? toll1Table : toll2Table;
+                var tollTable = n == 1 ? toll1List : toll2List;
 
-                bool enteredGate = false;
+                bool canEnterGate = false;
                 if (semaphore != null)
                     // WaitOne() ждёт какое-то время и, если
                     // получает сигнал (в данном случае —
@@ -60,10 +61,13 @@
                     // при времени ожидания = 0, как здесь, он
                     // просто смотрит, есть ли "свободное место"
                     // и сразу возвращает true/false
-                    enteredGate = semaphore.WaitOne(TimeSpan.Zero);
-                if (enteredGate) // в семафор, на шлагбаум
+                    canEnterGate = semaphore.WaitOne(TimeSpan.Zero);
+                if (canEnterGate) // в семафор, на шлагбаум
                 {
-
+                    tollTable.Invoke(() =>
+                    {
+                        tollTable.Items.Add(car);
+                    });
                 }
                 else // в очередь, &*$%@# %@!$, в очередь!
                 {
