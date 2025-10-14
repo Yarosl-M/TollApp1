@@ -3,7 +3,11 @@
     public partial class Form1 : Form
     {
         public static readonly Random rng = new Random();
+        // maybe we won't even need this?? idk
         private bool simulationRunning = false;
+        private Semaphore tollSemaphore1;
+        private Semaphore tollSemaphore2;
+
         public Form1()
         {
             InitializeComponent();
@@ -28,41 +32,46 @@
         {
             simulationRunning = true;
             tabControl1.SelectedIndex = 0;
-            Task.Run(() => CarGenerator());
-            Task.Run(() => CarGenerator2());
+            tollSemaphore1 = new Semaphore(0, (int)toll1GateCount.Value);
+            tollSemaphore2 = new Semaphore(0, (int)toll2GateCount.Value);
+            Task.Run(() => CarGenerator(1));
+            Task.Run(() => CarGenerator(2));
         }
 
-        // создаёт машины для первого пункта
-        private async Task CarGenerator()
+        private async Task CarGenerator(int n)
         {
-            double mean = (double)CarArrivalInterval.Value;
+            double mean = n == 1 ? (double)CarArrivalInterval.Value
+                : (double)highwayToll2Interval.Value;
             while (simulationRunning)
             {
                 double waitPeriod = NextExp(mean);
 
                 var car = new Car();
-                
-                arrival1Queue.Invoke(() =>
-                {
-                    arrival1Queue.Items.Add(car);
-                });
-                await Task.Delay(TimeSpan.FromSeconds(waitPeriod));
-            }
-        }
+                var addQueue = n == 1 ? arrival1Queue : arrival2Queue;
+                var semaphore = n == 1 ? tollSemaphore1 : tollSemaphore2;
+                var tollTable = n == 1 ? toll1Table : toll2Table;
 
-        // создаёт машины для второго пункта (те, что подъезжают
-        // с другого шоссе)
-        private async Task CarGenerator2()
-        {
-            double mean = (double)highwayToll2Interval.Value;
-            while (simulationRunning)
-            {
-                double waitPeriod = NextExp(mean);
-                var car = new Car();
-                arrival2Queue.Invoke(() =>
+                bool enteredGate = false;
+                if (semaphore != null)
+                    // WaitOne() ждёт какое-то время и, если
+                    // получает сигнал (в данном случае —
+                    // освободился "шлагбаум"), возвращает true,
+                    // возвращает false, если не дождался
+                    // при времени ожидания = 0, как здесь, он
+                    // просто смотрит, есть ли "свободное место"
+                    // и сразу возвращает true/false
+                    enteredGate = semaphore.WaitOne(TimeSpan.Zero);
+                if (enteredGate) // в семафор, на шлагбаум
                 {
-                    arrival2Queue.Items.Add(car);
-                });
+
+                }
+                else // в очередь, &*$%@# %@!$, в очередь!
+                {
+                    addQueue.Invoke(() =>
+                    {
+                        addQueue.Items.Add(car);
+                    });
+                }
                 await Task.Delay(TimeSpan.FromSeconds(waitPeriod));
             }
         }
@@ -78,7 +87,11 @@
             double lambda = 1.0 / meanSeconds;
             return Math.Clamp(-Math.Log(1.0 - u) / lambda,
                 0.15, 5.0);
-            
+        }
+
+        private void carTimer_Tick(object sender, EventArgs e)
+        {
+            if (simulationRunning) { }
         }
     }
 }

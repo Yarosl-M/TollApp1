@@ -420,10 +420,10 @@
             tabPage2.Controls.Add(label2);
             tabPage2.Controls.Add(toll1GateCount);
             tabPage2.Controls.Add(toll2GateCount);
-            tabPage2.Location = new Point(4, 37);
+            tabPage2.Location = new Point(4, 29);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(1068, 586);
+            tabPage2.Size = new Size(1068, 594);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Параметры";
             tabPage2.UseVisualStyleBackColor = true;
@@ -467,6 +467,12 @@
             pInput.Size = new Size(111, 34);
             pInput.TabIndex = 1;
             pInput.Value = new decimal(new int[] { 25, 0, 0, 0 });
+            // 
+            // carTimer
+            // 
+            carTimer.Enabled = true;
+            carTimer.Interval = 50;
+            carTimer.Tick += carTimer_Tick;
             // 
             // Form1
             // 
