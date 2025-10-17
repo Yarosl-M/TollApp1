@@ -46,7 +46,7 @@
             {
                 double waitPeriod = NextExp(mean);
 
-                var car = new Car();
+                Car car = new Car();
                 var addQueue = n == 1 ? arrival1Queue : arrival2Queue;
                 var semaphore = n == 1 ? tollSemaphore1 : tollSemaphore2;
                 //var tollTable = n == 1 ? toll1Table : toll2Table;
@@ -68,6 +68,7 @@
                     {
                         tollTable.Items.Add(car);
                     });
+                    ServiceCar(tollTable, semaphore, car);
                 }
                 else // в очередь, &*$%@# %@!$, в очередь!
                 {
@@ -77,6 +78,52 @@
                     });
                 }
                 await Task.Delay(TimeSpan.FromSeconds(waitPeriod));
+            }
+        }
+
+        private Car ServiceCar(ListBox tollList,
+            Semaphore semaphore, Car car)
+        {
+            if (!tollList.Items.Contains(car)) return car;
+            Task.Run(async () =>
+            {
+                double ServiceMeanTime = (double)tollsInterval.Value;
+                // точно экспоненциальное?
+                double serviceTime = NextExp(ServiceMeanTime);
+                // ожидать какое-то время на шлагбауме (время обслуживания)
+                await Task.Delay(TimeSpan.FromSeconds(serviceTime));
+                // убрать машину из списка, соответствующего шлагбауму
+                tollList.Invoke(() =>
+                {
+                    tollList.Items.Remove(car);
+                });
+                semaphore.Release();
+                // далее, наверное, нужно что-то с ней делать, так?
+                // ???
+                return car;
+            });
+        }
+        
+        private void TryAdmitFromArrivalQueue(ListBox arrivalQueue,
+            Semaphore semaphore, ListBox serviceList)
+        {
+            while (arrivalQueue.Items.Count > 0)
+            {
+                // проверяем, не занят ли семафор
+                // (ожидание так же 0)
+                if (!semaphore.WaitOne(0))
+                {
+                    // если занят (нет свободных шлагбаумов)
+                    break;
+                }
+                // иначе (не занят, есть свободные шлагбаумы)
+                Car next = arrivalQueue.Items[0] as Car;
+                arrivalQueue.Items.Remove(next);
+                serviceList.Invoke(() =>
+                {
+                    serviceList.Items.Add(next);
+                });
+                //ServiceCar(next);
             }
         }
 
@@ -90,7 +137,7 @@
             double u = rng.NextDouble();
             double lambda = 1.0 / meanSeconds;
             return Math.Clamp(-Math.Log(1.0 - u) / lambda,
-                0.15, 5.0);
+                0.1, 7.5);
         }
 
         private void carTimer_Tick(object sender, EventArgs e)
