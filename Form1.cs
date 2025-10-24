@@ -24,7 +24,7 @@
             {
                 input.Value = 1;
             }
-            pInput.Value = 25;
+            probInput.Value = 25;
         }
 
         // запуск симуляции
@@ -32,12 +32,16 @@
         {
             simulationRunning = true;
             tabControl1.SelectedIndex = 0;
-            tollSemaphore1 = new Semaphore(0, (int)toll1GateCount.Value);
-            tollSemaphore2 = new Semaphore(0, (int)toll2GateCount.Value);
+            var gateCount1 = (int)toll1GateCount.Value;
+            var gateCount2 = (int)toll2GateCount.Value;
+            tollSemaphore1 = new Semaphore(gateCount1, gateCount1);
+            tollSemaphore2 = new Semaphore(gateCount2, gateCount2);
             Task.Run(() => CarGenerator(1));
             Task.Run(() => CarGenerator(2));
         }
 
+        // создаёт новые машины, отправляет их либо к первому,
+        // либо ко второму пункту пропуска (определяется по номеру)
         private async Task CarGenerator(int n)
         {
             double mean = n == 1 ? (double)CarArrivalInterval.Value
@@ -49,7 +53,6 @@
                 Car car = new Car();
                 var addQueue = n == 1 ? arrival1Queue : arrival2Queue;
                 var semaphore = n == 1 ? tollSemaphore1 : tollSemaphore2;
-                //var tollTable = n == 1 ? toll1Table : toll2Table;
                 var tollTable = n == 1 ? toll1List : toll2List;
 
                 bool canEnterGate = false;
@@ -68,7 +71,10 @@
                     {
                         tollTable.Items.Add(car);
                     });
-                    ServiceCar(tollTable, semaphore, car);
+                    if (n == 1)
+                        ServiceCar1(car);
+                    else if (n == 2)
+                        ServiceCar2(car);
                 }
                 else // в очередь, &*$%@# %@!$, в очередь!
                 {
@@ -81,32 +87,78 @@
             }
         }
 
-        private Car ServiceCar(ListBox tollList,
-            Semaphore semaphore, Car car)
+        // обслуживает машину на первом пропускном пункте
+        // (когда она УЖЕ прошла очередь (если она была))
+        // т. е. семафор уже тоже отсчитал
+        // т. е. это добавление на один из "шлагбаумов"-"баумов"-"баумов"
+        // затем: извлечение из первого пропускного пункта,
+        // затем либо машина продолжает в очередь на второй пункт,
+        // либо съезжает с шоссе
+        private void ServiceCar1(Car car)
         {
-            if (!tollList.Items.Contains(car)) return car;
+            if (toll1List.Items.Contains(car)) return;
             Task.Run(async () =>
             {
                 double ServiceMeanTime = (double)tollsInterval.Value;
                 // точно экспоненциальное?
-                double serviceTime = NextExp(ServiceMeanTime);
+                //double serviceTime = NextExp(ServiceMeanTime);
+                double serviceTime = (new Random())
+                .NextDouble() * 5.0 + 0.1;
                 // ожидать какое-то время на шлагбауме (время обслуживания)
                 await Task.Delay(TimeSpan.FromSeconds(serviceTime));
                 // убрать машину из списка, соответствующего шлагбауму
-                tollList.Invoke(() =>
+                toll1List.Invoke(() =>
                 {
-                    tollList.Items.Remove(car);
+                    toll1List.Items.Remove(car);
                 });
-                semaphore.Release();
+                tollSemaphore1.Release();
                 // далее, наверное, нужно что-то с ней делать, так?
-                // ???
-                return car;
+                // с вероятностью P съезжает с шоссе (ничего не нужно делать)
+                if (new Random().NextDouble() < ((double)(probInput.Value) / 100.0))
+                {
+                    return;
+                }
+                // или едет дальше на второй пункт
+                else
+                {
+
+                }
             });
         }
-        
-        private void TryAdmitFromArrivalQueue(ListBox arrivalQueue,
-            Semaphore semaphore, ListBox serviceList)
+
+        // обслуживает машину на втором пропускном пункте
+        // (так же, когда она уже прошла очередь и семафор уже
+        // сработал
+        // затем: машина только съезжает с шоссе
+        // (т. е. просто удаляется)
+        private void ServiceCar2(Car car)
         {
+            if (toll2List.Items.Contains(car)) return;
+            Task.Run(async () =>
+            {
+                // dt2 - среднее время обслуживания одинаково
+                // для обоих пунктов
+                double serviceMeanTime = (double)tollsInterval.Value;
+                double serviceTime = new Random()
+                .NextDouble() * 5.0 + 0.1;
+                // ожидать какое-то время на шлагбауме
+                await Task.Delay(TimeSpan.FromSeconds(serviceTime));
+                toll2List.Invoke(() =>
+                {
+                    toll2List.Items.Remove(car);
+                });
+                tollSemaphore2.Release();
+                // всё, конец
+            });
+        }
+
+        // что это такое??????
+        // serviceList - это шлагбаум???
+        private void TryAdmitFromArrivalQueue(int n)
+        {
+            var arrivalQueue = n == 1 ? arrival1Queue : arrival2Queue;
+            var semaphore = n == 1 ? tollSemaphore1 : tollSemaphore2;
+            var serviceList = n == 1 ? toll1List : toll2List;
             while (arrivalQueue.Items.Count > 0)
             {
                 // проверяем, не занят ли семафор
@@ -126,7 +178,6 @@
                 //ServiceCar(next);
             }
         }
-
 
         // должно вернуть случайное число с экспоненциальным
         // распределением (также дополнительно ограничено сверху

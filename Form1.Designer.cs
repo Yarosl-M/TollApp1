@@ -50,16 +50,16 @@
             label9 = new Label();
             label7 = new Label();
             arrival2Queue = new ListBox();
+            toll2List = new ListBox();
+            toll1List = new ListBox();
             travel2List = new ListBox();
             arrival1Queue = new ListBox();
             tabPage2 = new TabPage();
             button1 = new Button();
             resetBtn = new Button();
             label12 = new Label();
-            pInput = new NumericUpDown();
+            probInput = new NumericUpDown();
             carTimer = new System.Windows.Forms.Timer(components);
-            toll1List = new ListBox();
-            toll2List = new ListBox();
             ((System.ComponentModel.ISupportInitialize)carArriveIntervalInput).BeginInit();
             ((System.ComponentModel.ISupportInitialize)toll1Interval).BeginInit();
             ((System.ComponentModel.ISupportInitialize)CarArrivalInterval).BeginInit();
@@ -70,7 +70,7 @@
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pInput).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)probInput).BeginInit();
             SuspendLayout();
             // 
             // carArriveIntervalInput
@@ -300,6 +300,26 @@
             arrival2Queue.Size = new Size(165, 172);
             arrival2Queue.TabIndex = 0;
             // 
+            // toll2List
+            // 
+            toll2List.FormattingEnabled = true;
+            toll2List.ItemHeight = 28;
+            toll2List.Location = new Point(732, 296);
+            toll2List.Name = "toll2List";
+            toll2List.SelectionMode = SelectionMode.None;
+            toll2List.Size = new Size(187, 172);
+            toll2List.TabIndex = 0;
+            // 
+            // toll1List
+            // 
+            toll1List.FormattingEnabled = true;
+            toll1List.ItemHeight = 28;
+            toll1List.Location = new Point(732, 54);
+            toll1List.Name = "toll1List";
+            toll1List.SelectionMode = SelectionMode.None;
+            toll1List.Size = new Size(187, 172);
+            toll1List.TabIndex = 0;
+            // 
             // travel2List
             // 
             travel2List.FormattingEnabled = true;
@@ -333,15 +353,15 @@
             tabPage2.Controls.Add(tollsInterval);
             tabPage2.Controls.Add(label12);
             tabPage2.Controls.Add(label5);
-            tabPage2.Controls.Add(pInput);
+            tabPage2.Controls.Add(probInput);
             tabPage2.Controls.Add(highwayToll2Interval);
             tabPage2.Controls.Add(label2);
             tabPage2.Controls.Add(toll1GateCount);
             tabPage2.Controls.Add(toll2GateCount);
-            tabPage2.Location = new Point(4, 29);
+            tabPage2.Location = new Point(4, 37);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(1068, 594);
+            tabPage2.Size = new Size(1068, 586);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Параметры";
             tabPage2.UseVisualStyleBackColor = true;
@@ -376,41 +396,21 @@
             label12.Text = "P (вероятность съезда с шоссе после пункта № 1, %)";
             label12.TextAlign = ContentAlignment.MiddleRight;
             // 
-            // pInput
+            // probInput
             // 
-            pInput.DecimalPlaces = 1;
-            pInput.Location = new Point(748, 283);
-            pInput.Margin = new Padding(15);
-            pInput.Name = "pInput";
-            pInput.Size = new Size(111, 34);
-            pInput.TabIndex = 1;
-            pInput.Value = new decimal(new int[] { 25, 0, 0, 0 });
+            probInput.DecimalPlaces = 1;
+            probInput.Location = new Point(748, 283);
+            probInput.Margin = new Padding(15);
+            probInput.Name = "probInput";
+            probInput.Size = new Size(111, 34);
+            probInput.TabIndex = 1;
+            probInput.Value = new decimal(new int[] { 25, 0, 0, 0 });
             // 
             // carTimer
             // 
             carTimer.Enabled = true;
             carTimer.Interval = 50;
             carTimer.Tick += carTimer_Tick;
-            // 
-            // toll1List
-            // 
-            toll1List.FormattingEnabled = true;
-            toll1List.ItemHeight = 28;
-            toll1List.Location = new Point(732, 54);
-            toll1List.Name = "toll1List";
-            toll1List.SelectionMode = SelectionMode.None;
-            toll1List.Size = new Size(187, 172);
-            toll1List.TabIndex = 0;
-            // 
-            // toll2List
-            // 
-            toll2List.FormattingEnabled = true;
-            toll2List.ItemHeight = 28;
-            toll2List.Location = new Point(732, 296);
-            toll2List.Name = "toll2List";
-            toll2List.SelectionMode = SelectionMode.None;
-            toll2List.Size = new Size(187, 172);
-            toll2List.TabIndex = 0;
             // 
             // Form1
             // 
@@ -435,7 +435,7 @@
             tabPage1.PerformLayout();
             tabPage2.ResumeLayout(false);
             tabPage2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)pInput).EndInit();
+            ((System.ComponentModel.ISupportInitialize)probInput).EndInit();
             ResumeLayout(false);
         }
 
@@ -468,7 +468,7 @@
         private ListBox travel2List;
         private Label label11;
         private Label label12;
-        private NumericUpDown pInput;
+        private NumericUpDown probInput;
         private System.Windows.Forms.Timer carTimer;
         private ListBox toll2List;
         private ListBox toll1List;
