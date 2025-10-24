@@ -76,7 +76,7 @@
                     else if (n == 2)
                         ServiceCar2(car);
                 }
-                else // в очередь, &*$%@# %@!$, в очередь!
+                else // в очередь
                 {
                     addQueue.Invoke(() =>
                     {
@@ -189,11 +189,6 @@
             double lambda = 1.0 / meanSeconds;
             return Math.Clamp(-Math.Log(1.0 - u) / lambda,
                 0.1, 7.5);
-        }
-
-        private void carTimer_Tick(object sender, EventArgs e)
-        {
-            if (simulationRunning) { }
         }
     }
 }

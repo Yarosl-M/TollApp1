@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
             carArriveIntervalInput = new NumericUpDown();
             label1 = new Label();
             label2 = new Label();
@@ -59,7 +58,6 @@
             resetBtn = new Button();
             label12 = new Label();
             probInput = new NumericUpDown();
-            carTimer = new System.Windows.Forms.Timer(components);
             ((System.ComponentModel.ISupportInitialize)carArriveIntervalInput).BeginInit();
             ((System.ComponentModel.ISupportInitialize)toll1Interval).BeginInit();
             ((System.ComponentModel.ISupportInitialize)CarArrivalInterval).BeginInit();
@@ -358,10 +356,10 @@
             tabPage2.Controls.Add(label2);
             tabPage2.Controls.Add(toll1GateCount);
             tabPage2.Controls.Add(toll2GateCount);
-            tabPage2.Location = new Point(4, 37);
+            tabPage2.Location = new Point(4, 29);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(1068, 586);
+            tabPage2.Size = new Size(1068, 594);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Параметры";
             tabPage2.UseVisualStyleBackColor = true;
@@ -405,12 +403,6 @@
             probInput.Size = new Size(111, 34);
             probInput.TabIndex = 1;
             probInput.Value = new decimal(new int[] { 25, 0, 0, 0 });
-            // 
-            // carTimer
-            // 
-            carTimer.Enabled = true;
-            carTimer.Interval = 50;
-            carTimer.Tick += carTimer_Tick;
             // 
             // Form1
             // 
@@ -469,7 +461,6 @@
         private Label label11;
         private Label label12;
         private NumericUpDown probInput;
-        private System.Windows.Forms.Timer carTimer;
         private ListBox toll2List;
         private ListBox toll1List;
     }
