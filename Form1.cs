@@ -40,6 +40,37 @@
             Task.Run(() => CarGenerator(2));
         }
 
+        // что вообще происходит?
+
+        /*
+         * в CarGenerator(n):
+         * в бесконечном цикле создаёт машину, затем проверяет, есть ли свободный
+         * шлагбаум-баум-баум
+         *      если есть, то он добавляет машину в шлагбаумный список
+         *      (первый или второй)
+         *      и "обслуживает её", т. е.запускает отдельный метод
+         *      (который не Task, но он просто запускает Task,
+         *      которая выполняется асинхронно)
+         *      там он ждёт какое-то время (среднее время ожидания, не экспоненциальное
+         *      распределение), после этого удаляет машину из очереди ожидания,
+         *      открывает семафор обратно, и затем что-то делает:
+         *      для первого пункта с вероятностью p машина просто убирается
+         *      иначе — переходит в очередь/обслуживается во второй пункт
+         *      для второго пункта — просто убирается
+         *      нужно будет отдельно сделать, чтобы тот же код управлял
+         *      помещением машины во вторую очередь
+         *      !!! также: после того, как машина убрана из шлагбаума,
+         *      нужно будет достать одну машину из очереди!
+         *      это, видимо, и есть TryAdmitблаблабла()
+         *      
+         *      если нет свободного места, добавляет в список очереди
+         *      дальше? не знаю что дальше, пока что с этой очередью вроде как ничего
+         *      не происходит
+         *  и после этого ждёт какое-то время (случайное на основе среднего времени
+         *  появления новых машин) перед повторением итерации цикла (и добавлением
+         *  новой машины)
+         */
+
         // создаёт новые машины, отправляет их либо к первому,
         // либо ко второму пункту пропуска (определяется по номеру)
         private async Task CarGenerator(int n)
@@ -64,14 +95,18 @@
                     // при времени ожидания = 0, как здесь, он
                     // просто смотрит, есть ли "свободное место"
                     // и сразу возвращает true/false
+                    // !!!!! здесь же выполняется декремент счётчика семафора
+                    // т. е. потом это уже не нужнО делать
                     canEnterGate = semaphore.WaitOne(TimeSpan.Zero);
                 if (canEnterGate) // в семафор, на шлагбаум
                 {
-                    tollTable.Invoke(() =>
-                    {
-                        tollTable.Items.Add(car);
-                    });
+                    //tollTable.Invoke(() =>
+                    //{
+                    //    tollTable.Items.Add(car);
+                    //});
                     if (n == 1)
+                        // декремент счётчика семафора уже был выполнен при
+                        // успешном выполнении WaitOne() (если вернул true)
                         ServiceCar1(car);
                     else if (n == 2)
                         ServiceCar2(car);
@@ -96,7 +131,8 @@
         // либо съезжает с шоссе
         private void ServiceCar1(Car car)
         {
-            if (toll1List.Items.Contains(car)) return;
+            //if (!toll1List.Items.Contains(car)) return;
+            toll1List.Invoke(toll1List.Items.Add, car); // not as good as GDScript's Callable.bind() but will do
             Task.Run(async () =>
             {
                 double ServiceMeanTime = (double)tollsInterval.Value;
@@ -112,6 +148,28 @@
                     toll1List.Items.Remove(car);
                 });
                 tollSemaphore1.Release();
+                // теперь нужнО ещё будет попробовать достать машину из очереди
+#pragma warning disable CS4014 // Так как этот вызов не ожидается, выполнение существующего метода продолжается до тех пор, пока вызов не будет завершен
+                // если в очереди есть что-то
+                // TODO:!!!!!
+                // 1) заменить на arrivalNQueue
+                // 2) также удалять из очереди
+                // всё то же самое повторять со вторым методом
+                if (toll1List.Invoke<bool>(() =>
+                {
+                    return toll1List.Items.Count != 0;
+                }))
+                {
+                    // тогда нужно забрать это что-то из очереди
+                    Car carFromQ = toll1List.Invoke<Car>(() =>
+                    {
+                        return toll1List.Items[toll1List.Items.Count - 1] as Car;
+                    });
+                    // и затем что-то с этим делать (добавить на шлагбаум)
+                    ServiceCar1(carFromQ);
+                }
+                // и теперь продолжаем с предыдущей машиной
+#pragma warning restore CS4014 // Так как этот вызов не ожидается, выполнение существующего метода продолжается до тех пор, пока вызов не будет завершен
                 // далее, наверное, нужно что-то с ней делать, так?
                 // с вероятностью P съезжает с шоссе (ничего не нужно делать)
                 if (new Random().NextDouble() < ((double)(probInput.Value) / 100.0))
@@ -121,10 +179,30 @@
                 // или едет дальше на второй пункт
                 else
                 {
+                    travel2List.Invoke(travel2List.Items.Add, car);
+                    double travelMean = (double)tollsInterval.Value;
+                    double travelTime = NextExp(travelMean);
+                    await Task.Delay(TimeSpan.FromSeconds(travelTime));
+                    travel2List.Invoke(travel2List.Items.Remove, car);
+                    bool canEnterToll2 = false;
+                    if (tollSemaphore2 != null)
+                    {
+                        canEnterToll2 = tollSemaphore2.WaitOne(TimeSpan.Zero);
+                    }
+                    // на шлагбаум сразу
+                    if (canEnterToll2)
+                    {
+                        ServiceCar2(car);
+                    }
+                    else
+                    {
+                        arrival2Queue.Invoke(arrival2Queue.Items.Add, car);
+                    }
 
                 }
             });
         }
+        
 
         // обслуживает машину на втором пропускном пункте
         // (так же, когда она уже прошла очередь и семафор уже
@@ -133,7 +211,8 @@
         // (т. е. просто удаляется)
         private void ServiceCar2(Car car)
         {
-            if (toll2List.Items.Contains(car)) return;
+            //if (!toll2List.Items.Contains(car)) return;
+            toll2List.Invoke(toll2List.Items.Add, car);
             Task.Run(async () =>
             {
                 // dt2 - среднее время обслуживания одинаково
@@ -148,7 +227,19 @@
                     toll2List.Items.Remove(car);
                 });
                 tollSemaphore2.Release();
-                // всё, конец
+                // больше ничего не нужно? на самом деле
+                // тоже нужно добавить машину из очереди (второй)
+                if (toll2List.Invoke<bool>(() =>
+                {
+                    return toll2List.Items.Count != 0;
+                })) // если есть машины во второй очереди
+                {
+                    Car carfromQ = toll2List.Invoke<Car>(() =>
+                    {
+                        return toll2List.Items[toll2List.Items.Count - 1] as Car;
+                    });
+                    ServiceCar2(carfromQ);
+                }
             });
         }
 
