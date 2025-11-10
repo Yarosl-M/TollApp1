@@ -3,7 +3,6 @@
     public partial class Form1 : Form
     {
         public static readonly Random rng = new Random();
-        // maybe we won't even need this?? idk
         private bool simulationRunning = false;
         private Semaphore tollSemaphore1;
         private Semaphore tollSemaphore2;
@@ -31,16 +30,18 @@
         private void button1_Click(object sender, EventArgs e)
         {
             simulationRunning = true;
+            // переключение на вкладку с симуляцией
             tabControl1.SelectedIndex = 0;
+            // для семафоров
             var gateCount1 = (int)toll1GateCount.Value;
             var gateCount2 = (int)toll2GateCount.Value;
             tollSemaphore1 = new Semaphore(gateCount1, gateCount1);
             tollSemaphore2 = new Semaphore(gateCount2, gateCount2);
+            // в цикле создаёт машины для двух пропускных пунктов
             Task.Run(() => CarGenerator(1));
             Task.Run(() => CarGenerator(2));
         }
 
-        // что вообще происходит?
 
         /*
          * в CarGenerator(n):
@@ -79,13 +80,17 @@
                 : (double)highwayToll2Interval.Value;
             while (simulationRunning)
             {
+                // ожидание между двумя машинами согласно экспоненциальному распределению
                 double waitPeriod = NextExp(mean);
 
                 Car car = new Car();
+                // очередь на n-ый пункт пропуска
+                // (туда добавляются машины, если все шлагбаумы заняты)
                 var addQueue = n == 1 ? arrival1Queue : arrival2Queue;
                 var semaphore = n == 1 ? tollSemaphore1 : tollSemaphore2;
+                // список, соответствующий n-ому шлагбауму
                 var tollTable = n == 1 ? toll1List : toll2List;
-
+                
                 bool canEnterGate = false;
                 if (semaphore != null)
                     // WaitOne() ждёт какое-то время и, если
@@ -95,31 +100,145 @@
                     // при времени ожидания = 0, как здесь, он
                     // просто смотрит, есть ли "свободное место"
                     // и сразу возвращает true/false
-                    // !!!!! здесь же выполняется декремент счётчика семафора
-                    // т. е. потом это уже не нужнО делать
+
+                    // NOTE (█████_███████ reference)!!!
+                    // декремент счётчика семафора выполняется уже здесь
+                    // автоматически, это не нужно делать потом (но нужно
+                    // будет его обратно возвращать)
                     canEnterGate = semaphore.WaitOne(TimeSpan.Zero);
                 if (canEnterGate) // в семафор, на шлагбаум
                 {
-                    //tollTable.Invoke(() =>
-                    //{
-                    //    tollTable.Items.Add(car);
-                    //});
-                    if (n == 1)
-                        // декремент счётчика семафора уже был выполнен при
-                        // успешном выполнении WaitOne() (если вернул true)
-                        ServiceCar1(car);
-                    else if (n == 2)
-                        ServiceCar2(car);
+                    // декремент счётчика семафора уже был выполнен при
+                    // успешном выполнении WaitOne() (в данной ветви вернул true)
+                    ServiceCar(n, car);
                 }
                 else // в очередь
                 {
+                    // в таблицу для очереди
                     addQueue.Invoke(() =>
                     {
                         addQueue.Items.Add(car);
                     });
+                    // после этого на шлагбаум "заберётся" машина из этой очереди
+                    // когда в ServiceCar() закончится обслуживание другой машины
                 }
+                // собственно тот период ожидания
                 await Task.Delay(TimeSpan.FromSeconds(waitPeriod));
             }
+        }
+
+        // обслуживает машину на n-ном пропускном пункте,
+        // затем делает что-то дальше, в зависимости от номера
+        // пропускного пункта (для n = 1 либо убирает машину вообще,
+        // либо перенаправляет её на 2 пункт)
+        // помимо этого, также после того, как машина убрана со
+        // шлагбаума, он берёт новую машину из своей очереди
+        private void ServiceCar(int n, Car car)
+        {
+            var semaphore = n == 1 ? tollSemaphore1 : tollSemaphore2;
+            // список: шлагбаум/пункт пропуска
+            var tollList = n == 1 ? toll1List : toll2List;
+            // список: очередь на шлагбаум
+            var queueList = n == 1 ? arrival1Queue : arrival2Queue;
+
+            // сначала добавить в сам "шлагбаумный" список
+            tollList.Invoke(tollList.Items.Add, car);
+            // с Invoke() вызывающая функция ожидает окончания выполнения,
+            // с BeginInvoke() вызывающая функция не ожидает окончания выполнения
+            // и продолжает выполнение (иногда это может быть полезно,
+            // иногда нет... в любом случае здесь не такие долгие операции)
+
+            // далее, выполняется Task.Run()
+            // т. е. он просто запускает выполнение этого кода, и при этом
+            // не блокирует вызывающий поток, т. е. просто запускает это отдельно
+            // и продолжает выполнение после Task.Run() (т. е. фактически выходит
+            // из метода)
+            // это значит, что не будет и бесконечной рекурсии при повторном вызове
+            // метода ServiceCar() прямо отсюда 
+            // (ну в любом случае выполнение прекратится, когда закончатся машины в очереди)
+            Task.Run(async () =>
+            {
+                double serviceMeanTime = (double)tollsInterval.Value;
+                double serviceTime = NextExp(serviceMeanTime);
+                // ожидание "обслуживания" машины
+                await Task.Delay(TimeSpan.FromSeconds(serviceTime));
+                // убрать машину из своего "шлагбаумного" списка
+                tollList.Invoke(tollList.Items.Remove, car);
+                // и открыть семафор обратно
+                //semaphore.Release();
+                // теперь если ещё что-то есть в очереди, забрать
+                //Car? car_maybe = queueList.Invoke<Car?>(() =>
+                //{
+                //    if (queueList.Items.Count == 0) return null;
+                //    var car = queueList.Items[0] as Car;
+                //    queueList.Items.RemoveAt(0);
+                //    return car;
+                //});
+                // теперь если ещё что-то есть в очереди, забрать
+                if (queueList.Invoke<int>(() => queueList.Items.Count) != 0)
+                {
+                    Car carfromQ = queueList.Invoke<Car>(() =>
+                    {
+                        Car car1 = queueList.Items[0] as Car;
+                        // и, конечно, также убрать из очереди
+                        queueList.Items.Remove(car1);
+                        // первый в очереди забрать
+                        return car1;
+                    });
+                    // опять декремент счётчика семафора
+                    // (фактически то же самое, что и в CarGenerator(),
+                    // только без проверки, хорошо
+                    //semaphore.WaitOne(TimeSpan.Zero);
+                    ServiceCar(n, carfromQ);
+                }
+                // просто на всякий случай, семафор будет "закрыт" всё время
+                // от "выхода" предыдущей машины до того, как опустеет очередь
+                else semaphore.Release();
+                // теперь, что происходит дальше с исходной машиной
+                if (n == 1) // первый шлагбаум:
+                { // либо съезжает с шоссе, либо на второй пункт
+                    if (new Random().NextDouble() < ((double)(probInput.Value) / 100.0))
+                    {
+                        // "съезжает с шоссе" (т. е. ничего больше не делать)
+                        return;
+                    }
+                    else // на второй пункт
+                    {
+                        // добавляется в другой список,
+                        // где просто отображается, какие машины
+                        // едут ко второму пункту
+                        travel2List.Invoke(
+                            travel2List.Items.Add, car);
+                        double travelMean = (double)tollsInterval.Value;
+                        double travelTime = NextExp(travelMean);
+                        // собственно ожидание проезда до второго пункта
+                        await Task.Delay(TimeSpan.FromSeconds(travelTime));
+                        // после этого на второй шлагбаум либо в очередь
+                        if (tollSemaphore2 != null)
+                        {   // сразу на второй шлагбаум
+                            if (tollSemaphore2.WaitOne(TimeSpan.Zero))
+                            {
+                                ServiceCar(2, car);
+                            }
+                        }
+                        else // в очередь
+                        {
+                            arrival2Queue.Invoke(() =>
+                            {
+                                arrival2Queue.Items.Add(car);
+                            });
+                            // после этого ServiceCar(2) автоматически заберёт
+                            // машину из очереди, когда освободится место
+                        }
+                    }
+                }
+                else if (n == 2) // второй шлагбаум
+                {
+                    // в принципе, более ничего не нужно делать?
+                    // старая машина убрана, новая (если есть) добавлена,
+                    // больше ничего не происходит
+                }
+            }); // конец Task
         }
 
         // обслуживает машину на первом пропускном пункте
@@ -198,7 +317,6 @@
                     {
                         arrival2Queue.Invoke(arrival2Queue.Items.Add, car);
                     }
-
                 }
             });
         }
