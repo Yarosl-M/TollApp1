@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             carArriveIntervalInput = new NumericUpDown();
             label1 = new Label();
             label2 = new Label();
@@ -412,6 +413,7 @@
             Controls.Add(tabControl1);
             Controls.Add(carArriveIntervalInput);
             Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(4);
             Name = "Form1";
             Text = "TAKE A [ A Ride around Town on Your Specil Cungadero]";
